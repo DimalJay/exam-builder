@@ -15,8 +15,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
 }
 
-/** Structural check that is just loose enough to reject garbage. */
-function looksLikeDocument(value: unknown): value is ExamDocument {
+/**
+ * Structural check that is just loose enough to reject garbage.
+ */
+export function looksLikeDocument(value: unknown): value is ExamDocument {
   if (!isRecord(value)) return false
 
   const { header, instructions, questions } = value
@@ -34,7 +36,7 @@ function looksLikeDocument(value: unknown): value is ExamDocument {
  * first `document.display.showAnswerKey` read. Defaulting to "show
  * everything" matches how those documents rendered before the option existed.
  */
-function withDefaults(document: ExamDocument): ExamDocument {
+export function withDefaults(document: ExamDocument): ExamDocument {
   // Read through `unknown`: `document.display` is typed as non-optional, so a
   // stored document that predates the field is a lie the type system cannot
   // warn about here but the runtime must survive.
@@ -58,8 +60,22 @@ function withDefaults(document: ExamDocument): ExamDocument {
       showWatermark: bool(display.showWatermark, defaults.showWatermark ?? true),
       showPageNumbers: bool(display.showPageNumbers, defaults.showPageNumbers ?? true),
     },
+  }
+}
 
-
+/**
+ * Parse and defensively default a serialised document.
+ *
+ * Shared by the localStorage loader and the JSON import path, so both treat the
+ * file format identically: anything that is not a document-shaped JSON object
+ * returns `null` instead of crashing the app.
+ */
+export function parseDocument(json: string): ExamDocument | null {
+  try {
+    const parsed: unknown = JSON.parse(json)
+    return looksLikeDocument(parsed) ? withDefaults(parsed) : null
+  } catch {
+    return null
   }
 }
 

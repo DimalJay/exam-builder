@@ -2,7 +2,7 @@ import { AlertTriangle, Loader2 } from 'lucide-react'
 import { useMemo } from 'react'
 
 import { DiagnosticList } from '@/components/preview/DiagnosticList'
-import { ExportPdfButton } from '@/components/preview/ExportPdfButton'
+import { ExportMenu } from '@/components/preview/ExportMenu'
 import { Badge } from '@/components/ui/badge'
 import { useExamDocument } from '@/state/useExam'
 import { buildTypstSource } from '@/typst/generate'
@@ -75,14 +75,17 @@ export function TypstPreview() {
           ) : null}
 
           {/*
-            Blocked while there are errors: the export compiles the same source,
-            so it would fail in exactly the same way. Warnings are fine — a font
-            substitution should not block a download.
+            The PDF item is blocked while there are errors: the export compiles
+            the same source, so it would fail in exactly the same way. Warnings
+            are fine — a font substitution should not block a download. The
+            JSON and Typst-source items stay available regardless.
           */}
-          <ExportPdfButton
+          <ExportMenu
             exportPdf={exportPdf}
             title={document.header.title}
-            disabled={errors.length > 0}
+            examDocument={document}
+            source={source}
+            pdfDisabled={errors.length > 0}
           />
         </div>
       </div>

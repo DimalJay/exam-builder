@@ -1,5 +1,6 @@
 import { BrandLogo } from '@/components/brand/BrandLogo'
 import { EditorPanel } from '@/components/editor/EditorPanel'
+import { ImportJsonButton } from '@/components/layout/ImportJsonButton'
 import { SplitPane } from '@/components/layout/SplitPane'
 import { TypstPreview } from '@/components/preview/TypstPreview'
 import { useExamTotals } from '@/state/useExam'
@@ -30,6 +31,8 @@ export function ExamWorkspace() {
         </div>
 
         <div className="flex items-center gap-3">
+          <ImportJsonButton />
+
           <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
             <span className="relative flex size-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
