@@ -19,4 +19,13 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    // Components under src/components/ui are vendored verbatim from the
+    // shadcn registry. Several intentionally export their `cva` variant map
+    // alongside the component, which is the library's documented pattern.
+    files: ['src/components/ui/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])
