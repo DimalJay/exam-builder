@@ -1,13 +1,11 @@
 interface BrandLogoProps {
   className?: string
   size?: 'sm' | 'md' | 'lg'
-  showBadge?: boolean
 }
 
 export function BrandLogo({
   className = '',
   size = 'md',
-  showBadge = true,
 }: BrandLogoProps) {
   const iconSizes = {
     sm: 'size-6',
@@ -67,13 +65,8 @@ export function BrandLogo({
           <span
             className={`font-bold tracking-tight text-foreground ${textSizes[size]}`}
           >
-            Exam<span className="text-indigo-600">Craft</span>
+            Exam <span className="text-indigo-600">Builder</span>
           </span>
-          {showBadge && (
-            <span className="rounded-md bg-indigo-50 px-1.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wider text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
-              Studio
-            </span>
-          )}
         </div>
         <span className="text-[0.68rem] font-medium text-muted-foreground hidden sm:block">
           Professional Exam Paper Builder
