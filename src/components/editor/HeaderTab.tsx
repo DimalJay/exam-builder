@@ -99,7 +99,7 @@ export function HeaderTab() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="serif">Serif (Libertinus / Times)</SelectItem>
+              <SelectItem value="serif">Times New Roman (Serif)</SelectItem>
               <SelectItem value="sans">Sans-serif (Noto Sans)</SelectItem>
             </SelectContent>
           </Select>

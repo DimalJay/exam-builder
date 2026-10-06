@@ -142,6 +142,10 @@ export function createDisplay(): ExamDisplay {
     showMarks: true,
     twoDigitNumbering: true,
     showEndOfPaper: true,
+    showInstructions: true,
+    showHeaderMeta: true,
+    showWatermark: true,
+    showPageNumbers: true,
   }
 }
 
@@ -403,7 +407,7 @@ export function createBoxedExamDocument(): ExamDocument {
       course: 'CS101 — Introduction to Computer Science',
       footer: 'Confidential — do not distribute.',
       style: 'boxed',
-      fontFamily: 'sans',
+      fontFamily: 'serif',
       metadata: [
         { id: createId('meta'), label: 'Duration', value: '3 hours' },
         { id: createId('meta'), label: 'Marks', value: '100' },

@@ -53,6 +53,10 @@ function withDefaults(document: ExamDocument): ExamDocument {
       showMarks: bool(display.showMarks, defaults.showMarks),
       twoDigitNumbering: bool(display.twoDigitNumbering, defaults.twoDigitNumbering ?? true),
       showEndOfPaper: bool(display.showEndOfPaper, defaults.showEndOfPaper ?? true),
+      showInstructions: bool(display.showInstructions, defaults.showInstructions ?? true),
+      showHeaderMeta: bool(display.showHeaderMeta, defaults.showHeaderMeta ?? true),
+      showWatermark: bool(display.showWatermark, defaults.showWatermark ?? true),
+      showPageNumbers: bool(display.showPageNumbers, defaults.showPageNumbers ?? true),
     },
 
 

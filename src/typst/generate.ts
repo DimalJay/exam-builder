@@ -53,7 +53,7 @@ function metaCell(label: string, value: string): string {
 /*                                Section blocks                              */
 /* -------------------------------------------------------------------------- */
 
-function renderBoxedHeader(header: ExamHeader): string {
+function renderBoxedHeader(header: ExamHeader, showMeta: boolean): string {
   const institution = present(header.institution)
   const title = present(header.title)
   const course = present(header.course)
@@ -71,13 +71,15 @@ function renderBoxedHeader(header: ExamHeader): string {
     #text(size: 10pt)[${course}]`)
   }
 
-  const meta = header.metadata
-    .map((entry) => {
-      const label = present(entry.label)
-      const value = present(entry.value)
-      return label !== null && value !== null ? metaCell(label, value) : null
-    })
-    .filter((cell): cell is string => cell !== null)
+  const meta = showMeta
+    ? header.metadata
+      .map((entry) => {
+        const label = present(entry.label)
+        const value = present(entry.value)
+        return label !== null && value !== null ? metaCell(label, value) : null
+      })
+      .filter((cell): cell is string => cell !== null)
+    : []
 
   const boxMeta = meta.slice(0, 3)
   const infoMeta = meta.slice(3, 7)
@@ -137,13 +139,14 @@ function renderBoxedHeader(header: ExamHeader): string {
 ]${examInfo}`
 }
 
-function renderSchoolHeader(header: ExamHeader): string {
+function renderSchoolHeader(header: ExamHeader, showMeta: boolean): string {
   const institution = present(header.institution)
   const title = present(header.title)
   const subtitle = present(header.subtitle)
-  const unit = present(header.unit || header.course)
+  const unit = showMeta ? present(header.unit || header.course) : null
   const time = header.time ? escapeTypst(header.time.trim()) : '1 ½ hours'
   const showName = header.showCandidateName !== false
+  const showTime = showMeta
 
   const titles: string[] = []
   if (institution && title) {
@@ -158,29 +161,36 @@ function renderSchoolHeader(header: ExamHeader): string {
     if (unit) titles.push(`#v(3pt)\n  #text(size: 14pt, weight: "bold")[${unit}]`)
   }
 
-  const metaRow = `#grid(
-  columns: (auto, 1fr),
+  // Time sits left, the candidate name line right. Either half can be switched
+  // off independently, so the grid degrades to a single cell or disappears.
+  const metaRow =
+    showTime && showName
+      ? `#grid(
+  columns: (1fr, 1fr),
   align: (bottom + left, bottom + right),
   [Time: ${time}],
-  ${showName ? `[Name: #box(width: 82%, repeat[.])],` : '[],'}
+  [Name: #box(width: 82%, repeat[.])],
 )`
+      : showTime
+        ? `[Time: ${time}]`
+        : showName
+          ? `#align(right)[Name: #box(width: 75%, repeat[.])]`
+          : ''
 
   return `#align(center)[
   ${titles.join('\n  ')}
 ]
 
-#v(14pt)
-${metaRow}
-#v(3pt)
+${metaRow ? `#v(14pt)\n${metaRow}\n#v(3pt)\n` : ''}
 #line(length: 100%, stroke: 0.6pt)
-#v(10pt)`
+#v(0pt)`
 }
 
-function renderHeader(header: ExamHeader): string {
+function renderHeader(header: ExamHeader, showMeta: boolean): string {
   if (header.style === 'boxed') {
-    return renderBoxedHeader(header)
+    return renderBoxedHeader(header, showMeta)
   }
-  return renderSchoolHeader(header)
+  return renderSchoolHeader(header, showMeta)
 }
 
 function renderInstructions(
@@ -260,8 +270,8 @@ function renderMcq(
         sub.columns === 2
           ? '(1fr, 1fr)'
           : sub.columns === 1
-          ? '(1fr)'
-          : '(1fr, 1.15fr, 1fr, 1fr)'
+            ? '(1fr)'
+            : '(1fr, 1.15fr, 1fr, 1fr)'
 
       const subOptions = sub.options
         .map((opt, i) => {
@@ -307,8 +317,8 @@ function renderMcq(
     colCount === 4
       ? '(1fr, 1fr, 1fr, 1fr)'
       : colCount === 1
-      ? '(1fr)'
-      : '(1fr, 1fr)'
+        ? '(1fr)'
+        : '(1fr, 1fr)'
 
   const cells = options
     .map((option) => `[${option.label} ${option.text}]`)
@@ -469,8 +479,16 @@ function renderQuestion(
 }
 
 
+/**
+ * The divider that closes the paper, pinned to the bottom of the last page.
+ *
+ * `#v(1fr)` is fractional spacing: it soaks up whatever height is left on the
+ * page, so the rule and the label land on the baseline of the sheet instead of
+ * trailing the final question. If the questions already fill the page the
+ * banner flows onto the next one and pins to the bottom of that sheet instead.
+ */
 function renderEndOfPaper(): string {
-  return `#v(15pt)
+  return `#v(1fr)
   #line(length: 100%, stroke: 0.6pt)
   #v(5pt)
   #align(center)[
@@ -546,10 +564,13 @@ export function buildTypstSource(
   const showAnswerKey = options.showAnswerKey ?? document.display.showAnswerKey
   const showMarks = options.showMarks ?? document.display.showMarks
   const twoDigit = document.display.twoDigitNumbering !== false
+  const showInstructions = document.display.showInstructions !== false
+  const showHeaderMeta = document.display.showHeaderMeta !== false
+  const showPageNumbers = document.display.showPageNumbers !== false
   const footerText = present(document.header.footer)
   const isBoxed = document.header.style === 'boxed'
   const fontName =
-    document.header.fontFamily === 'sans' ? 'Noto Sans' : 'Libertinus Serif'
+    document.header.fontFamily === 'sans' ? 'Noto Sans' : 'Times New Roman'
   const watermark = present(document.header.watermark)
   const watermarkSize = document.header.watermarkSize ?? 68
   const watermarkLuma = document.header.watermarkLuma ?? 94
@@ -557,13 +578,18 @@ export function buildTypstSource(
   const watermarkWeight =
     document.header.watermarkWeight === 'regular' ? 'regular' : 'bold'
 
-  const backgroundSetup = watermark
-    ? `  background: rotate(${watermarkAngle}deg)[#text(font: "${fontName}", size: ${watermarkSize}pt, fill: luma(${watermarkLuma}%), weight: "${watermarkWeight}")[${watermark}]],`
-    : ''
+  const backgroundSetup =
+    watermark && document.display.showWatermark !== false
+      ? `  background: rotate(${watermarkAngle}deg)[#text(font: "${fontName}", size: ${watermarkSize}pt, fill: luma(${watermarkLuma}%), weight: "${watermarkWeight}")[${watermark}]],`
+      : ''
 
-  const footerSetup = footerText
-    ? `  footer: context [#grid(columns: (1fr, auto), align: (left + horizon, right + horizon), [#text(font: "${fontName}", size: 9pt, fill: luma(45%))[${footerText}]], [#text(font: "${fontName}", size: 11pt)[#counter(page).display()]])],`
-    : `  footer: context align(right)[#text(font: "${fontName}", size: 11pt)[#counter(page).display()]],`
+  // Typst prints no page numbers unless a footer is set, so switching the
+  // toggle off simply drops the footer from the page setup.
+  const footerSetup = !showPageNumbers
+    ? ''
+    : footerText
+      ? `  footer: context [#grid(columns: (1fr, auto), align: (left + horizon, right + horizon), [#text(font: "${fontName}", size: 9pt, fill: luma(45%))[${footerText}]], [#text(font: "${fontName}", size: 11pt)[#counter(page).display()]])],`
+      : `  footer: context align(right)[#text(font: "${fontName}", size: 11pt)[#counter(page).display()]],`
 
   const pageSetup = [
     '#set page(',
@@ -600,12 +626,12 @@ export function buildTypstSource(
     if (list.length === 0) return
     const heading = isBoxed
       ? (partTitle.includes('I') && !partTitle.includes('II')
-          ? 'PART I – MULTIPLE CHOICE QUESTIONS'
-          : 'PART II – STRUCTURED QUESTIONS')
+        ? 'PART I – MULTIPLE CHOICE QUESTIONS'
+        : 'PART II – STRUCTURED QUESTIONS')
       : partTitle
 
     questionBlocks.push(
-      `#v(16pt)\n#align(center)[\n  #text(size: 13pt, weight: "bold")[#underline[${heading}]]\n]\n#v(12pt)`,
+      `#v(0pt)\n#align(center)[\n  #text(size: 13pt, weight: "bold")[#underline[${heading}]]\n]\n#v(0pt)`,
     )
 
     list.forEach((question, index) => {
@@ -627,9 +653,11 @@ export function buildTypstSource(
   }
 
   const sections = [
-    renderHeader(document.header),
-    renderInstructions(document.instructions, document.header.style),
-    questionBlocks.join('\n#v(16pt)\n'),
+    renderHeader(document.header, showHeaderMeta),
+    showInstructions
+      ? renderInstructions(document.instructions, document.header.style)
+      : '',
+    questionBlocks.join('\n#v(8pt)\n'),
     document.display.showEndOfPaper !== false ? renderEndOfPaper() : '',
   ].filter((section) => section.trim().length > 0)
 
@@ -639,7 +667,7 @@ export function buildTypstSource(
 #set par(justify: true, leading: 0.8em)
 #show heading: it => text(weight: "bold")
 
-${sections.join('\n#v(14pt)\n')}
+${sections.join('\n#v(8pt)\n')}
 ${showAnswerKey ? renderAnswerKey(document.questions) : ''}
 `
 

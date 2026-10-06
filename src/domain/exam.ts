@@ -137,7 +137,7 @@ export interface ExamHeader {
   watermarkWeight?: 'regular' | 'bold'
   /** Header presentation style: 'school' (Sri Lankan / School exam) or 'boxed' (University exam) */
   style?: 'school' | 'boxed'
-  /** Typeface: 'serif' (Libertinus Serif) or 'sans' (Noto Sans) */
+  /** Typeface: 'serif' (Times New Roman) or 'sans' (Noto Sans) */
   fontFamily?: 'serif' | 'sans'
   /** Repeated on every page footer. Empty string omits it. */
   footer: string
@@ -155,8 +155,16 @@ export interface ExamDisplay {
   showMarks: boolean
   /** Whether question numbers use leading zeros: "01." vs "1." */
   twoDigitNumbering?: boolean
-  /** Show "END OF PAPER" at the end of the paper */
+  /** Show "END OF PAPER" at the end of the paper, pinned to the bottom of the page */
   showEndOfPaper?: boolean
+  /** Print the instructions block between the header and the questions. */
+  showInstructions?: boolean
+  /** Print the header extras: time duration, unit/topic line and details table. */
+  showHeaderMeta?: boolean
+  /** Print the diagonal watermark text configured on the header. */
+  showWatermark?: boolean
+  /** Print the page footer: page numbers and any custom footer text. */
+  showPageNumbers?: boolean
 }
 
 /** Candidate-facing guidance rendered between the header and the questions. */

@@ -48,8 +48,10 @@ export function DisplayTab() {
     <div className="flex flex-col gap-4 p-4">
       <p className="text-xs text-muted-foreground">
         Applies to the preview and the exported PDF alike. A candidate's copy
-        usually wants both off; a marker's copy keeps them on.
+        usually wants the answer key off; a marker's copy keeps it on.
       </p>
+
+      <p className="text-xs font-medium text-foreground">Questions & answers</p>
 
       <div className="flex flex-col gap-4 rounded-lg border border-border p-4">
         <ToggleRow
@@ -106,7 +108,7 @@ export function DisplayTab() {
         <ToggleRow
           id="display-end-of-paper"
           label="Show END OF PAPER banner"
-          hint="Prints an END OF PAPER divider at the bottom of the final question."
+          hint="Prints an END OF PAPER divider, pinned to the bottom of the final page."
         >
           <Switch
             id="display-end-of-paper"
@@ -115,6 +117,84 @@ export function DisplayTab() {
               dispatch({
                 type: 'display/update',
                 patch: { showEndOfPaper: checked },
+              })
+            }
+          />
+        </ToggleRow>
+      </div>
+
+      <p className="text-xs font-medium text-foreground">Page layout</p>
+
+      <div className="flex flex-col gap-4 rounded-lg border border-border p-4">
+        <ToggleRow
+          id="display-instructions"
+          label="Show instructions"
+          hint="Prints the instructions block (general directive and numbered list) between the header and the questions."
+        >
+          <Switch
+            id="display-instructions"
+            checked={display.showInstructions !== false}
+            onCheckedChange={(checked) =>
+              dispatch({
+                type: 'display/update',
+                patch: { showInstructions: checked },
+              })
+            }
+          />
+        </ToggleRow>
+
+        <div className="h-px bg-border" />
+
+        <ToggleRow
+          id="display-header-meta"
+          label="Show header details"
+          hint="Prints the header extras: time duration, unit/topic line and the details table."
+        >
+          <Switch
+            id="display-header-meta"
+            checked={display.showHeaderMeta !== false}
+            onCheckedChange={(checked) =>
+              dispatch({
+                type: 'display/update',
+                patch: { showHeaderMeta: checked },
+              })
+            }
+          />
+        </ToggleRow>
+
+        <div className="h-px bg-border" />
+
+        <ToggleRow
+          id="display-watermark"
+          label="Show watermark"
+          hint="Prints the diagonal watermark text set on the Header tab. Turning it off keeps the text for later."
+        >
+          <Switch
+            id="display-watermark"
+            checked={display.showWatermark !== false}
+            onCheckedChange={(checked) =>
+              dispatch({
+                type: 'display/update',
+                patch: { showWatermark: checked },
+              })
+            }
+          />
+        </ToggleRow>
+
+        <div className="h-px bg-border" />
+
+        <ToggleRow
+          id="display-page-numbers"
+          label="Show page numbers & footer"
+          hint="Prints the page number in the bottom corner, plus the footer text from the Header tab when one is set."
+        >
+          <Switch
+            id="display-page-numbers"
+            checked={display.showPageNumbers !== false}
+            onCheckedChange={(checked) =>
+              dispatch({
+                type: 'display/update',
+                patch: { showPageNumbers: checked },
               })
             }
           />
