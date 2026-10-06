@@ -551,9 +551,14 @@ export function buildTypstSource(
   const fontName =
     document.header.fontFamily === 'sans' ? 'Noto Sans' : 'Libertinus Serif'
   const watermark = present(document.header.watermark)
+  const watermarkSize = document.header.watermarkSize ?? 68
+  const watermarkLuma = document.header.watermarkLuma ?? 94
+  const watermarkAngle = document.header.watermarkAngle ?? -45
+  const watermarkWeight =
+    document.header.watermarkWeight === 'regular' ? 'regular' : 'bold'
 
   const backgroundSetup = watermark
-    ? `  background: rotate(-45deg)[#text(font: "${fontName}", size: 68pt, fill: luma(94%), weight: "bold")[${watermark}]],`
+    ? `  background: rotate(${watermarkAngle}deg)[#text(font: "${fontName}", size: ${watermarkSize}pt, fill: luma(${watermarkLuma}%), weight: "${watermarkWeight}")[${watermark}]],`
     : ''
 
   const footerSetup = footerText

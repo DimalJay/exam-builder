@@ -147,7 +147,7 @@ export function createDisplay(): ExamDisplay {
 
 /**
  * The Grade 6 Science Unit Evaluation paper requested by the user:
- * matches the exact header, watermark "H.I. Nawoda", PART I MCQs, True/False,
+ * matches the exact header, watermark "Exam Craft", PART I MCQs, True/False,
  * Fill in blanks, PART II structured questions with dotted lines, and dichotomous key.
  */
 export function createScienceExamDocument(): ExamDocument {
@@ -160,7 +160,7 @@ export function createScienceExamDocument(): ExamDocument {
       course: '',
       time: '1 ½ hours',
       showCandidateName: true,
-      watermark: 'H.I. Nawoda',
+      watermark: 'Exam Craft',
       style: 'school',
       fontFamily: 'serif',
       footer: '',

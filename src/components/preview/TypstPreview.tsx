@@ -35,15 +35,23 @@ export function TypstPreview() {
   return (
     <div className="flex h-full flex-col">
       {/* ------------------------------ toolbar ------------------------------ */}
-      <div className="flex h-11 shrink-0 items-center gap-2 border-b border-border px-4">
-        <p className="text-sm font-medium">Preview</p>
+      <div className="flex h-11 shrink-0 items-center gap-2 border-b border-border/80 bg-background/50 px-4 backdrop-blur">
+        <div className="flex items-center gap-2">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Live Preview
+          </p>
+          <span className="rounded bg-indigo-50 px-1.5 py-0.5 text-[0.65rem] font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
+            Vector Typst
+          </span>
+        </div>
 
         {status === 'compiling' && isSlow ? (
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Loader2 className="size-3 animate-spin" />
+            <Loader2 className="size-3 animate-spin text-indigo-600" />
             Compiling
           </span>
         ) : null}
+
 
         <div className="ml-auto flex items-center gap-1.5">
           {errors.length > 0 ? (

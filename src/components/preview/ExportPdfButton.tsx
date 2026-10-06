@@ -101,26 +101,26 @@ export function ExportPdfButton({
   return (
     <Button
       type="button"
-      variant="outline"
       size="sm"
       disabled={disabled || phase === 'working'}
       onClick={() => void handleClick()}
-      title="Download the paper as a PDF"
+      title="Download the paper as a print-ready PDF"
+      className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-sm transition-all active:scale-[0.98] gap-1.5"
     >
       {phase === 'working' ? (
         <>
-          <Loader2 className="animate-spin" />
-          Exporting
+          <Loader2 className="size-3.5 animate-spin" />
+          Exporting…
         </>
       ) : phase === 'done' ? (
         <>
-          <Download />
-          Saved
+          <Download className="size-3.5" />
+          Downloaded
         </>
       ) : (
         <>
-          <Download />
-          PDF
+          <Download className="size-3.5" />
+          Export PDF
         </>
       )}
       {/* The label alone conveys nothing to a screen reader; this does. */}
@@ -132,5 +132,6 @@ export function ExportPdfButton({
             : ''}
       </span>
     </Button>
+
   )
 }

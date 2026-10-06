@@ -125,8 +125,16 @@ export interface ExamHeader {
   time?: string
   /** Whether to show candidate name dotted line on header bar */
   showCandidateName?: boolean
-  /** Diagonal watermark text across every page, e.g. "H.I. Nawoda" */
+  /** Diagonal watermark text across every page," */
   watermark?: string
+  /** Watermark font size in points. Defaults to 68. */
+  watermarkSize?: number
+  /** Watermark lightness 0–100 (Typst `luma`); lower = darker, higher = fainter. Defaults to 94. */
+  watermarkLuma?: number
+  /** Watermark rotation in degrees. Defaults to -45. */
+  watermarkAngle?: number
+  /** Watermark font weight. Defaults to 'bold'. */
+  watermarkWeight?: 'regular' | 'bold'
   /** Header presentation style: 'school' (Sri Lankan / School exam) or 'boxed' (University exam) */
   style?: 'school' | 'boxed'
   /** Typeface: 'serif' (Libertinus Serif) or 'sans' (Noto Sans) */

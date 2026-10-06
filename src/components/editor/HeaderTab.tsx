@@ -1,6 +1,6 @@
 import { BookOpen, GraduationCap, Plus, X } from 'lucide-react'
 
-import { Field } from '@/components/editor/Field'
+import { Field, NumberField } from '@/components/editor/Field'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -198,23 +198,90 @@ export function HeaderTab() {
           </div>
         )}
 
-        <Field
-          htmlFor="header-watermark"
-          label="Watermark Text"
-          hint="Faint diagonal text on every page (e.g. Teacher/School name). Leave empty to disable."
-        >
-          <Input
-            id="header-watermark"
-            value={header.watermark ?? ''}
-            placeholder="H.I. Nawoda"
-            onChange={(event) =>
-              dispatch({
-                type: 'header/update',
-                patch: { watermark: event.target.value },
-              })
-            }
-          />
-        </Field>
+        <div className="flex flex-col gap-3 rounded-md border border-border p-3">
+          <Field
+            htmlFor="header-watermark"
+            label="Watermark Text"
+            hint="Faint diagonal text on every page (e.g. Teacher/School name). Leave empty to disable."
+          >
+            <Input
+              id="header-watermark"
+              value={header.watermark ?? ''}
+              placeholder="Exam Craft"
+              onChange={(event) =>
+                dispatch({
+                  type: 'header/update',
+                  patch: { watermark: event.target.value },
+                })
+              }
+            />
+          </Field>
+
+          <div className="grid grid-cols-3 gap-2">
+            <NumberField
+              htmlFor="watermark-size"
+              label="Size (pt)"
+              value={header.watermarkSize ?? 68}
+              min={20}
+              max={160}
+              onValueChange={(value) =>
+                dispatch({
+                  type: 'header/update',
+                  patch: { watermarkSize: value },
+                })
+              }
+            />
+            <NumberField
+              htmlFor="watermark-faintness"
+              label="Faintness"
+              value={header.watermarkLuma ?? 94}
+              min={50}
+              max={98}
+              onValueChange={(value) =>
+                dispatch({
+                  type: 'header/update',
+                  patch: { watermarkLuma: value },
+                })
+              }
+            />
+            <NumberField
+              htmlFor="watermark-angle"
+              label="Angle (°)"
+              value={header.watermarkAngle ?? -45}
+              min={-90}
+              max={90}
+              onValueChange={(value) =>
+                dispatch({
+                  type: 'header/update',
+                  patch: { watermarkAngle: value },
+                })
+              }
+            />
+          </div>
+          <p className="-mt-1 text-xs text-muted-foreground/80">
+            Faintness 50–98: higher is lighter, lower is darker and more visible.
+          </p>
+
+          <Field htmlFor="watermark-weight" label="Weight">
+            <Select
+              value={header.watermarkWeight ?? 'bold'}
+              onValueChange={(value) =>
+                dispatch({
+                  type: 'header/update',
+                  patch: { watermarkWeight: value as 'bold' | 'regular' },
+                })
+              }
+            >
+              <SelectTrigger id="watermark-weight">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="bold">Bold</SelectItem>
+                <SelectItem value="regular">Regular</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
+        </div>
       </div>
 
       {/* ----------------- Boxed Style Metadata Table ----------------- */}
